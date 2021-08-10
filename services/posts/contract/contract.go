@@ -10,7 +10,6 @@ type PostModel struct {
 }
 
 type UpdatePostReq struct {
-	UserId  string
 	Id      string
 	Content string
 }
