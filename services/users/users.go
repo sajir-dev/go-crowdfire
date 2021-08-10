@@ -2,7 +2,6 @@ package users
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/sajir-dev/go-crowdfire/domain"
 	"github.com/sajir-dev/go-crowdfire/services/users/contract"
@@ -24,7 +23,6 @@ func Create(req *contract.CreateUser) (*contract.UserModel, error) {
 	})
 
 	if err != nil {
-		fmt.Println("line 29", err)
 		return nil, err
 	}
 

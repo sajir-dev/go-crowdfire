@@ -3,7 +3,6 @@ package domain
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"os"
 	"time"
 
@@ -38,8 +37,6 @@ func InitDB() error {
 	if err := dbInstance.Ping(); err != nil {
 		return err
 	}
-
-	fmt.Println(err)
 
 	return nil
 }
@@ -119,14 +116,12 @@ func UpdatePost(req *postscontract.UpdatePostReq) (*postscontract.PostModel, err
 	stmt := `UPDATE "posts" SET "content" = $1 WHERE id=$2`
 	_, err := dbInstance.Exec(stmt, req.Content, req.Id)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
 	stmt = `SELECT * from "posts" where id=$1`
 	row := dbInstance.QueryRow(stmt, req.Id)
 	if err = row.Scan(&createdAt, &id, &createdBy, &content); err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
@@ -155,7 +150,6 @@ func GetPosts(req *postscontract.GetPostsReq) ([]postscontract.PostModel, error)
 		var createdBy string
 		var content string
 		if err = rows.Scan(&createdAt, &id, &createdBy, &content); err != nil {
-			fmt.Println(err)
 			return nil, err
 		}
 
