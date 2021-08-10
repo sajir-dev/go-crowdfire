@@ -65,12 +65,11 @@ func UpdatePost(c *gin.Context) {
 	req := &postscontract.UpdatePostReq{
 		Id:      body.Id,
 		Content: body.Content,
-		UserId:  user.Id,
 	}
 
 	res, err := posts.Update(req)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"sucess":  false,
 			"message": err,
 		})

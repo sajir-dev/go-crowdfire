@@ -3,37 +3,36 @@ package users
 import (
 	"errors"
 
-	"github.com/sajir-dev/go-crowdfire/data"
+	"github.com/sajir-dev/go-crowdfire/domain"
 	"github.com/sajir-dev/go-crowdfire/services/users/contract"
 )
 
 func Create(req *contract.CreateUser) (*contract.UserModel, error) {
 
 	if len(req.Email) < 5 || len(req.Password) < 5 {
-		return nil, errors.New("could not verify email or password")
+		return nil, errors.New("invalid email or password")
 	}
 
-	for _, user := range data.UsersMap {
-		if user.Email == req.Email {
-			return nil, errors.New("email already registered")
-		}
+	if err := domain.CreateUser(req); err != nil {
+		return nil, err
 	}
 
-	data.UsersMap[req.Email] = &contract.UserModel{
-		Id:       req.Email,
+	res, err := domain.Login(&contract.LoginReq{
 		Email:    req.Email,
 		Password: req.Password,
-		Name:     req.Name,
+	})
+
+	if err != nil {
+		return nil, err
 	}
 
-	return data.UsersMap[req.Email], nil
+	return res, nil
 }
 
 func Login(req *contract.LoginReq) (*contract.UserModel, error) {
-	for _, user := range data.UsersMap {
-		if user.Email == req.Email && user.Password == req.Password {
-			return user, nil
-		}
+	res, err := domain.Login(req)
+	if err != nil {
+		return nil, errors.New("invalid credentials")
 	}
-	return nil, errors.New("invalid credentials")
+	return res, nil
 }

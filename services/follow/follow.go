@@ -1,31 +1,20 @@
 package follow
 
 import (
-	"errors"
-
-	"github.com/sajir-dev/go-crowdfire/data"
+	"github.com/sajir-dev/go-crowdfire/domain"
 	"github.com/sajir-dev/go-crowdfire/services/follow/contract"
 )
 
 func Follow(req *contract.FollowReq) error {
-	for user, followers := range data.FollowingMap {
-		if user == req.Userid {
-			// TODO Validation:
-			// 1.  follower is already following,
-			// 2. user-id is valid
-			followers.Userids = append(followers.Userids, req.Following)
-			return nil
-		}
-	}
 
-	return errors.New("could not perform the operation")
+	err := domain.Follow(req)
+	return err
 }
 
 func GetFollowers(req *contract.GetFollowersReq) (*contract.Following, error) {
-	for user, followers := range data.FollowingMap {
-		if user == req.Userid {
-			return followers, nil
-		}
+	res, err := domain.GetFollowers(req)
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("could not perform the operation")
+	return res, nil
 }
