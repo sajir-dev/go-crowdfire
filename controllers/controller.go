@@ -65,6 +65,7 @@ func UpdatePost(c *gin.Context) {
 	req := &postscontract.UpdatePostReq{
 		Id:      body.Id,
 		Content: body.Content,
+		Userid:  user.Id,
 	}
 
 	res, err := posts.Update(req)

@@ -1,7 +1,6 @@
 package posts
 
 import (
-	"errors"
 	"sort"
 
 	"github.com/sajir-dev/go-crowdfire/domain"
@@ -25,7 +24,7 @@ func GetPosts(req *contract.GetPostsReq) ([]contract.PostModel, error) {
 	})
 
 	if err != nil {
-		return nil, errors.New("could not perform the operation")
+		return nil, nil
 	}
 
 	for _, user := range following.Userids {
