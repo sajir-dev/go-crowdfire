@@ -12,7 +12,6 @@ DB_PORT=27017
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
 DB_NAME=crowdfire
-
 -- CREATE TABLE "users" (
 --   "id" SERIAL PRIMARY KEY,
 --   "name" varchar,
