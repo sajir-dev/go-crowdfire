@@ -80,8 +80,8 @@ func Follow(req *followcontract.FollowReq) error {
 	row := dbInstance.QueryRow(stmt, req.Userid)
 	err := row.Scan(pq.Array(&following))
 	if err != nil && err.Error() == "sql: no rows in result set" {
-		following = append(following, req.Following)
-		stmt = `INSERT INTO "following" ("user","following")VALUES ($1, $2)`
+		following = []string{req.Following}
+		stmt = `INSERT INTO "following" ("userid","following")VALUES ($1, $2)`
 		_, err = dbInstance.Exec(stmt, req.Userid, pq.Array(following))
 		if err != nil {
 			return err
@@ -113,14 +113,25 @@ func UpdatePost(req *postscontract.UpdatePostReq) (*postscontract.PostModel, err
 	var id string
 	var createdBy string
 	var content string
-	stmt := `UPDATE "posts" SET "content" = $1 WHERE id=$2`
+
+	stmt := `SELECT * from "posts" where id=$1`
+	row := dbInstance.QueryRow(stmt, req.Id)
+	if err := row.Scan(&createdAt, &id, &createdBy, &content); err != nil {
+		return nil, err
+	}
+
+	if createdBy != req.Userid {
+		return nil, errors.New("wrong post requested")
+	}
+
+	stmt = `UPDATE "posts" SET "content" = $1 WHERE id=$2`
 	_, err := dbInstance.Exec(stmt, req.Content, req.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	stmt = `SELECT * from "posts" where id=$1`
-	row := dbInstance.QueryRow(stmt, req.Id)
+	row = dbInstance.QueryRow(stmt, req.Id)
 	if err = row.Scan(&createdAt, &id, &createdBy, &content); err != nil {
 		return nil, err
 	}
